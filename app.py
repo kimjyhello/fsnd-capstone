@@ -29,10 +29,8 @@ def create_app(test_config=None):
   setup_db(app)
   CORS(app)
 
-  if not db_populated:
-    db_drop_and_create_all()
-    addDummyData()
-    db_populated = 1
+  #db_drop_and_create_all()
+  #addDummyData()
 
   @app.after_request
   def after_request(response):
