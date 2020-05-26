@@ -87,6 +87,9 @@ Setting the `FLASK_APP` variable to `app.py` directs flask to use the `app.py` f
             - DELETE /actors
             - PATCH /actors 
             - PATCH /movies
+    - The endpoints need to be run with the proper authorization tokens:
+        - {'Authorization':'Bearer token'}
+    - Sample tokens for each role are provided in the config.py file
 
 
 ## Error Handling
