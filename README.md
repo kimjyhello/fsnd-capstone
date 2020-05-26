@@ -273,33 +273,33 @@ Setting the `FLASK_APP` variable to `app.py` directs flask to use the `app.py` f
     - Sample:
         - curl https://vj-casting-agency.herokuapp.com/actors/14 -X DELETE 
             ```
-        {
-            "actors": [
-                {
-                    "age": 49,
-                    "gender": "M",
-                    "id": 1,
-                    "movies": [
-                        1,
-                        12
-                    ],
-                    "name": "Jeremy Renner"
-                },
-                {
-                    "age": 30,
-                    "gender": "M",
-                    "id": 2,
-                    "movies": [
-                        7,
-                        8
-                    ],
-                    "name": "Daniel Radcliffe"
-                }
-            ],
-            "deleted": 14,
-            "success": true,
-            "total_actors": 2
-        }
+            {
+                "actors": [
+                    {
+                        "age": 49,
+                        "gender": "M",
+                        "id": 1,
+                        "movies": [
+                            1,
+                            12
+                        ],
+                        "name": "Jeremy Renner"
+                    },
+                    {
+                        "age": 30,
+                        "gender": "M",
+                        "id": 2,
+                        "movies": [
+                            7,
+                            8
+                        ],
+                        "name": "Daniel Radcliffe"
+                    }
+                ],
+                "deleted": 14,
+                "success": true,
+                "total_actors": 2
+            }
             ```
 
 - PATCH /movies/{m_id}
