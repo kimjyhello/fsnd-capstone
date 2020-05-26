@@ -103,8 +103,8 @@ def create_app(test_config=None):
         return jsonify({
           'success': True,
           'deleted': m_id,
-          'actors': current_page,
-          'total_actors': len(selection)
+          'movies': current_page,
+          'total_movies': len(selection)
         }), 200
 
 
@@ -300,7 +300,7 @@ def create_app(test_config=None):
       else:
         return jsonify({
           'success': True,
-          'movie': actor.format()
+          'actor': actor.format()
         }), 200
 
 
