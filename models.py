@@ -3,10 +3,17 @@ from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
 from datetime import datetime
+from config import heroku_db
 
 database_name = "casting"
 user='veronicakim'
-database_path = "postgres://{}@{}/{}".format(user, 'localhost:5432', database_name)
+host='localhost'
+port='5432'
+database_path = "postgres://{}@{}:{}/{}".format(
+    heroku_db['user'], 
+    heroku_db['host'], 
+    port, 
+    heroku_db['database_name'])
 
 db = SQLAlchemy()
 
