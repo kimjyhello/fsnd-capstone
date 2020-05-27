@@ -11,6 +11,7 @@ from datetime import datetime
 
 from config import jwt
 
+
 class CapstoneTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -18,7 +19,8 @@ class CapstoneTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = 'casting'
-        self.database_path = "postgres://{}@{}/{}".format('veronicakim', 'localhost:5432', self.database_name)
+        self.database_path = "postgres://{}@{}/{}".format(
+            'veronicakim', 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
         self.casting_assistant = jwt['casting_assistant']
@@ -38,6 +40,7 @@ class CapstoneTestCase(unittest.TestCase):
     '''
     Tests for GET /actors
     '''
+
     def test_get_paginated_actors(self):
         res = self.client().get('/actors')
         data = json.loads(res.data)
@@ -58,11 +61,11 @@ class CapstoneTestCase(unittest.TestCase):
 
     def test_get_paginated_actors_with_page_number_casting_director(self):
         res = self.client().get('/actors?page=1',
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_director
-            )})
-        
+                                headers={
+                                    'Authorization': 'Bearer {}'.format(
+                                        self.casting_director
+                                    )})
+
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -81,6 +84,7 @@ class CapstoneTestCase(unittest.TestCase):
     '''
     Tests for GET /movies
     '''
+
     def test_get_paginated_movies(self):
         res = self.client().get('/movies')
         data = json.loads(res.data)
@@ -101,10 +105,10 @@ class CapstoneTestCase(unittest.TestCase):
 
     def test_get_paginated_movies_with_page_number_exec_prod(self):
         res = self.client().get('/movies?page=1',
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.executive_producer
-                )})
+                                headers={
+                                    'Authorization': 'Bearer {}'.format(
+                                        self.executive_producer
+                                    )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -123,12 +127,13 @@ class CapstoneTestCase(unittest.TestCase):
     '''
     Tests for DELETE /actors
     '''
+
     def test_delete_actor_casting_director(self):
         res = self.client().delete('/actors/2',
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_director
-                )})
+                                   headers={
+                                       'Authorization': 'Bearer {}'.format(
+                                           self.casting_director
+                                       )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -136,21 +141,22 @@ class CapstoneTestCase(unittest.TestCase):
 
     def test_401_delete_actor_casting_assistant(self):
         res = self.client().delete('/actors/4',
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_assistant
-                )})
+                                   headers={
+                                       'Authorization': 'Bearer {}'.format(
+                                           self.casting_assistant
+                                       )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
-        self.assertEqual(data['message'], 'Not authorized for the current user')
+        self.assertEqual(
+            data['message'], 'Not authorized for the current user')
 
     def test_404_delete_actor_exec_prod_nonexistant_actor(self):
         res = self.client().delete('/actors/999',
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.executive_producer
-                )})
+                                   headers={
+                                       'Authorization': 'Bearer {}'.format(
+                                           self.executive_producer
+                                       )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -160,12 +166,13 @@ class CapstoneTestCase(unittest.TestCase):
     '''
     Tests for DELETE /movies
     '''
+
     def test_delete_movie_exec_prod(self):
         res = self.client().delete('/movies/2',
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.executive_producer
-                )})
+                                   headers={
+                                       'Authorization': 'Bearer {}'.format(
+                                           self.executive_producer
+                                       )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -173,21 +180,22 @@ class CapstoneTestCase(unittest.TestCase):
 
     def test_401_delete_movie_casting_director(self):
         res = self.client().delete('/movies/1',
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_director
-                )})
+                                   headers={
+                                       'Authorization': 'Bearer {}'.format(
+                                           self.casting_director
+                                       )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
-        self.assertEqual(data['message'], 'Not authorized for the current user')
+        self.assertEqual(
+            data['message'], 'Not authorized for the current user')
 
     def test_404_delete_movie_exec_prod_nonexistant_movie(self):
         res = self.client().delete('/movies/999',
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.executive_producer
-                )})
+                                   headers={
+                                       'Authorization': 'Bearer {}'.format(
+                                           self.executive_producer
+                                       )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -197,17 +205,18 @@ class CapstoneTestCase(unittest.TestCase):
     '''
     Tests for POST /actors
     '''
+
     def test_post_actor_casting_director(self):
         res = self.client().post('/actors',
-            json={
-                'name':'Emma Watson',
-                'age':30,
-                'gender':'F'
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_director
-            )})
+                                 json={
+                                     'name': 'Emma Watson',
+                                     'age': 30,
+                                     'gender': 'F'
+                                 },
+                                 headers={
+                                     'Authorization': 'Bearer {}'.format(
+                                         self.casting_director
+                                     )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -215,13 +224,13 @@ class CapstoneTestCase(unittest.TestCase):
 
     def test_422_post_actor_exec_prod_missing_fields(self):
         res = self.client().post('/actors',
-            json={
-                'name':'Will Smith'
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.executive_producer
-            )})
+                                 json={
+                                     'name': 'Will Smith'
+                                 },
+                                 headers={
+                                     'Authorization': 'Bearer {}'.format(
+                                         self.executive_producer
+                                     )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
@@ -230,35 +239,36 @@ class CapstoneTestCase(unittest.TestCase):
 
     def test_401_post_actor_casting_assistant(self):
         res = self.client().post('/actors',
-            json={
-                'name':"I should'nt be added",
-                'age':24,
-                'gender':'M'
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_assistant
-            )})
+                                 json={
+                                     'name': "I should'nt be added",
+                                     'age': 24,
+                                     'gender': 'M'
+                                 },
+                                 headers={
+                                     'Authorization': 'Bearer {}'.format(
+                                         self.casting_assistant
+                                     )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Not authorized for the current user')
-
+        self.assertEqual(
+            data['message'], 'Not authorized for the current user')
 
     '''
     Tests for POST /movies
     '''
+
     def test_post_movie_exec_prod(self):
         res = self.client().post('/movies',
-            json={
-                'title':'Avengers: Endgame',
-                'date':'2019-04-26'
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.executive_producer
-            )})
+                                 json={
+                                     'title': 'Avengers: Endgame',
+                                     'date': '2019-04-26'
+                                 },
+                                 headers={
+                                     'Authorization': 'Bearer {}'.format(
+                                         self.executive_producer
+                                     )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -266,13 +276,13 @@ class CapstoneTestCase(unittest.TestCase):
 
     def test_422_post_movie_exec_prod_missing_fields(self):
         res = self.client().post('/movies',
-            json={
-                'name':'Titanic'
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.executive_producer
-            )})
+                                 json={
+                                     'name': 'Titanic'
+                                 },
+                                 headers={
+                                     'Authorization': 'Bearer {}'.format(
+                                         self.executive_producer
+                                     )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
@@ -281,63 +291,64 @@ class CapstoneTestCase(unittest.TestCase):
 
     def test_401_post_movie_casting_director(self):
         res = self.client().post('/movies',
-            json={
-                'title':'Frozen',
-                'date': '2013-11-27'
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_director
-            )})
+                                 json={
+                                     'title': 'Frozen',
+                                     'date': '2013-11-27'
+                                 },
+                                 headers={
+                                     'Authorization': 'Bearer {}'.format(
+                                         self.casting_director
+                                     )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Not authorized for the current user')
-
+        self.assertEqual(
+            data['message'], 'Not authorized for the current user')
 
     '''
     Tests for PATCH /actors
     '''
+
     def test_patch_actor_exec_prod(self):
         res = self.client().patch('/actors/3',
-            json={
-                'age':29
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.executive_producer
-            )})
+                                  json={
+                                      'age': 29
+                                  },
+                                  headers={
+                                      'Authorization': 'Bearer {}'.format(
+                                          self.executive_producer
+                                      )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
-
     def test_401_patch_actor_casting_assistant(self):
         res = self.client().patch('/actors/2',
-            json={
-                'age':30
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_assistant
-            )})
+                                  json={
+                                      'age': 30
+                                  },
+                                  headers={
+                                      'Authorization': 'Bearer {}'.format(
+                                          self.casting_assistant
+                                      )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Not authorized for the current user')
+        self.assertEqual(
+            data['message'], 'Not authorized for the current user')
 
     def test_404_patch_actor_casting_director_nonexistant_actor(self):
         res = self.client().patch('/actors/99',
-            json={
-                'age':19
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_director
-            )})
+                                  json={
+                                      'age': 19
+                                  },
+                                  headers={
+                                      'Authorization': 'Bearer {}'.format(
+                                          self.casting_director
+                                      )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -347,15 +358,16 @@ class CapstoneTestCase(unittest.TestCase):
     '''
     Tests for PATCH /movies
     '''
+
     def test_patch_movie_casting_director(self):
         res = self.client().patch('/movies/3',
-            json={
-                'release_date': datetime(1988, 3, 11)
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_director
-            )})
+                                  json={
+                                      'release_date': datetime(1988, 3, 11)
+                                  },
+                                  headers={
+                                      'Authorization': 'Bearer {}'.format(
+                                          self.casting_director
+                                      )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -363,33 +375,35 @@ class CapstoneTestCase(unittest.TestCase):
 
     def test_401_patch_movie_casting_assistant(self):
         res = self.client().patch('/movies/2',
-            json={
-                'title': 'ChangeMe'
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_assistant
-            )})
+                                  json={
+                                      'title': 'ChangeMe'
+                                  },
+                                  headers={
+                                      'Authorization': 'Bearer {}'.format(
+                                          self.casting_assistant
+                                      )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Not authorized for the current user')
+        self.assertEqual(
+            data['message'], 'Not authorized for the current user')
 
     def test_404_patch_movie_casting_director_nonexistant_actor(self):
         res = self.client().patch('/movies/99',
-            json={
-                'title': 'NewMovie'
-            },
-            headers={
-                'Authorization':'Bearer {}'.format(
-                    self.casting_director
-            )})
+                                  json={
+                                      'title': 'NewMovie'
+                                  },
+                                  headers={
+                                      'Authorization': 'Bearer {}'.format(
+                                          self.casting_director
+                                      )})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Resource not found')
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,13 +6,13 @@ from datetime import datetime
 from config import heroku_db
 
 database_name = "casting"
-user='veronicakim'
-host='localhost'
-port='5432'
+user = 'veronicakim'
+host = 'localhost'
+port = '5432'
 database_path = "postgres://{}@{}:{}/{}".format(
-    heroku_db['user'], 
-    heroku_db['host'], 
-    port, 
+    heroku_db['user'],
+    heroku_db['host'],
+    port,
     heroku_db['database_name'])
 
 db = SQLAlchemy()
@@ -21,6 +21,8 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
+
+
 def setup_db(app, database_path=database_path):
     app.config['SQLALCHEMY_DATABASE_URI'] = database_path
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -28,12 +30,14 @@ def setup_db(app, database_path=database_path):
     db.init_app(app)
     db.create_all()
 
+
 '''
 db_drop_and_create_all()
     drops the database tables and starts fresh
     can be used to initialize a clean database
-    !!NOTE you can change the database_filename variable to have multiple verisons of a database
 '''
+
+
 def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
@@ -43,13 +47,17 @@ def db_drop_and_create_all():
 Association table to join Movies with Actors
 '''
 association_table = db.Table('association',
-    Column('movie_id', db.Integer, db.ForeignKey('Movie.id'), primary_key=True),
-    Column('actor_id', db.Integer, db.ForeignKey('Actor.id'), primary_key=True)
-)
+                             Column('movie_id', db.Integer, db.ForeignKey(
+                                 'Movie.id'), primary_key=True),
+                             Column('actor_id', db.Integer, db.ForeignKey(
+                                 'Actor.id'), primary_key=True)
+                             )
 
 '''
 Movies
 '''
+
+
 class Movie(db.Model):
     __tablename__ = 'Movie'
 
@@ -62,7 +70,7 @@ class Movie(db.Model):
         back_populates='movies'
     )
 
-    #actors = db.relationship('Actor', secondary=association_table,
+    # actors = db.relationship('Actor', secondary=association_table,
     #    backref=db.backref('movies', lazy=True))
 
     def __init__(self, title, release_date):
@@ -78,7 +86,7 @@ class Movie(db.Model):
 
     def update(self):
         db.session.commit()
-    
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -91,9 +99,12 @@ class Movie(db.Model):
             'actors': [actor.id for actor in self.actors]
         }
 
+
 '''
 Actors
 '''
+
+
 class Actor(db.Model):
     __tablename__ = 'Actor'
 
@@ -121,7 +132,7 @@ class Actor(db.Model):
 
     def update(self):
         db.session.commit()
-    
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -135,14 +146,6 @@ class Actor(db.Model):
             'movies': [movie.id for movie in self.movies]
         }
 
-        #'movies': [movie.format() for movie in Movie.query.filter(id=self.id)]
-
-'''
-class MovieToActor(db.Model):
-    __tablename__ = 'MoviesToActors'
-    left = db.relationship('Movies', backref=db.backref('right_association'), primary_key=True)
-    right = db.relationship('Actors', backref=db.backref('left_association'), primary_key=True)
-'''
 
 def addDummyData():
     movie0 = Movie(
@@ -349,4 +352,3 @@ def addDummyData():
     actor.insert()
     actor.movies.append(movie4)
     actor.update()
-

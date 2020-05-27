@@ -3,15 +3,17 @@ from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
-from config import auth0
+import os
 
-AUTH0_DOMAIN = auth0['AUTH0_DOMAIN']
-ALGORITHMS = auth0['ALGORITHMS']
-API_AUDIENCE = auth0['API_AUDIENCE']
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
+ALGORITHMS = [os.environ.get("ALGORITHMS")]
+API_AUDIENCE = os.environ.get("API_AUDIENCE")
 
 '''
 AuthError Exception
 '''
+
+
 class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
@@ -42,8 +44,9 @@ def get_token_auth_header():
             'code': 'invalid_header',
             'description': 'Authorization header must be [bearer token].'
         }, 401)
-    
+
     return header[1]
+
 
 '''
 check_permissinos(permission, payload) method
@@ -52,23 +55,27 @@ check_permissinos(permission, payload) method
         payload: decoded jwt payload
 
     - Raises an AuthError if permissions are not included in the payload
-    - Raises an AuthError if the requested permission string is not in the payload permissions array
+    - Raises an AuthError if the requested permission string is not
+    in the payload permissions array
     - Returns true otherwise
 '''
+
+
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
         raise AuthError({
-            'code':'invalid_claims',
-            'description':'Permissions not included in the JWT payload'
-    }, 400)
+            'code': 'invalid_claims',
+            'description': 'Permissions not included in the JWT payload'
+        }, 400)
     permissions = payload['permissions']
     if permission not in permissions:
         raise AuthError({
-            'code':'unauthorized',
+            'code': 'unauthorized',
             'description': 'Not authorized for the current user'
         }, 401)
 
     return True
+
 
 '''
 verify_decode_jwt(token) method
@@ -77,6 +84,8 @@ verify_decode_jwt(token) method
 
     - Returns the decoded payload
 '''
+
+
 def verify_decode_jwt(token):
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
@@ -117,7 +126,8 @@ def verify_decode_jwt(token):
         except jwt.JWTClaimsError:
             raise AuthError({
                 'code': 'invalid_claims',
-                'description': 'Incorrect claims. Please, check the audience and issuer.'
+                'description': 'Incorrect claims. Please, \
+                    check the audience and issuer.'
             }, 401)
         except Exception:
             raise AuthError({
@@ -125,17 +135,21 @@ def verify_decode_jwt(token):
                 'description': 'Unable to parse authentication token.'
             }, 400)
     raise AuthError({
-            'code': 'invalid_header',
-            'description': 'Unable to find the appropriate key.'
-        }, 400)
+        'code': 'invalid_header',
+        'description': 'Unable to find the appropriate key.'
+    }, 400)
+
 
 '''
 @requires_auth(permission) decorator method
     @INPUTS
         permission: string permission (i.e. 'post:drink')
-        
-    - Returns the decorator which passes the decoded payload to the decorated method
+
+    - Returns the decorator which passes the decoded payload to
+    the decorated method
 '''
+
+
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
@@ -143,7 +157,7 @@ def requires_auth(permission=''):
             token = get_token_auth_header()
             try:
                 payload = verify_decode_jwt(token)
-            except:
+            except Exception:
                 raise AuthError({
                     'code': 'invalid_payload',
                     'description': 'Invalid payload'

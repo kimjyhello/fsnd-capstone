@@ -3,6 +3,14 @@
 This is the API for Casting Agency, where you can view the list of actors and movies and add, update and delete entries. 
 
 # 
+# Introduction
+# 
+
+### Motivations
+
+This is the final project for Udacity Full Stack Nanodegree Program. This project combines all of the skills learned in the course including SQL and Data Modeling, API Development and Documentation, Identity and Access Management and Server Deployment. 
+
+# 
 # Running the App Locally 
 # 
 ### Installing Dependencies
@@ -38,6 +46,12 @@ With Postgres running, call the following function in config.py to drop and crea
   db_drop_and_create_all()
 You may also add some dummy data using the following function in config.py:
   addDummyData()
+
+## Environment Variables Setup
+Before running the app, make sure you run setup.sh to configure the environment variables for Auth0 configuration:
+```bash
+source ./setup.sh
+```
 
 ## Running the server
 
@@ -89,7 +103,7 @@ Setting the `FLASK_APP` variable to `app.py` directs flask to use the `app.py` f
             - PATCH /movies
     - The endpoints need to be run with the proper authorization tokens:
         - {'Authorization':'Bearer token'}
-    - Sample tokens for each role are provided in the config.py file
+    - Sample tokens for each role are provided in the temp_jwt_tokens file
 
 
 ## Error Handling
